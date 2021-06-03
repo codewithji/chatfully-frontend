@@ -1,0 +1,7 @@
+.chat-msg {
+    padding: 10px;
+    margin: 10px;
+    background: linear-gradient(180deg, rgba(197,150,252,1) 0%, rgba(149,125,255,1) 100%);
+    border-radius: 4px;
+    float: right;
+}

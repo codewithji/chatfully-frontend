@@ -1,10 +1,13 @@
 import "./ChatBody.css";
 import {useEffect, useState} from "react";
+import ChatMessage from "../ChatMessage/ChatMessage";
 
 const ws = new WebSocket("ws://localhost:8080/ws");
 
 const ChatBody = () => {
     const [message, setMessage] = useState("");
+
+    const [messages, updateMessage] = useState([]);
 
     useEffect(() => {
         ws.onopen = () => {
@@ -13,7 +16,7 @@ const ChatBody = () => {
 
         ws.onmessage = (e) => {
             const message = e.data;
-            console.log(message);
+            updateMessage(state => [...state, message]);
         }
 
         ws.onclose = () => {
@@ -22,10 +25,12 @@ const ChatBody = () => {
 
     }, [])
 
-    const handleSend = () => {
+    const handleSend = (e) => {
         if (!ws) {
             return;
         }
+        e.preventDefault();
+
 
         ws.send(message);
         setMessage("");
@@ -33,14 +38,22 @@ const ChatBody = () => {
 
     return (
         <div className="chat-body">
-            <div id="log" />
+            <div className="content">
+                { messages.map((m, i) => <ChatMessage key={i} text={m} />) }
+            </div>
 
-            <button onClick={handleSend}>Send</button>
-            <input type="text"
-                   value={message}
-                   onChange={(e) => setMessage(e.target.value)}
-                   autoFocus
-                   autoComplete="off"/>
+            <form>
+                <input type="text"
+                       className="input"
+                       value={message}
+                       onChange={(e) => setMessage(e.target.value)}
+                       autoFocus
+                       autoComplete="off"/>
+                <input onClick={handleSend}
+                       className="send-btn"
+                       value="Send"
+                       type="submit"/>
+            </form>
         </div>
     )
 }
